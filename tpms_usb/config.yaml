@@ -1,0 +1,11 @@
+name: USB TPMS
+version: "1.0.0"
+slug: tpms_usb
+description: 433 MHz USB TPMS dongle (CH340 1a86:7523) -> MQTT tpms/state
+url: https://github.com/danderik88/usb-tpms-home-assistant
+arch: [aarch64]
+startup: application
+boot: auto
+init: false
+uart: true
+services: ["mqtt:need"]

@@ -1,0 +1,82 @@
+# MQTT sensors for the USB TPMS add-on. Put them under `mqtt: sensor:` in configuration.yaml
+# (or in the file you include there). Entity ids: sensor.tpms_<wheel>_pressure / _temperature.
+# expire_after: the add-on republishes every 60 s, so the sensors go unavailable 5 min after
+# the add-on or the dongle stops. It does NOT detect a dead sensor (see README).
+mqtt:
+  sensor:
+    - name: "TPMS Front Left Pressure"
+      unique_id: "tpms_front_left_pressure"
+      state_topic: "tpms/state"
+      value_template: "{{ value_json.front_left.bar if value_json.front_left is defined }}"
+      json_attributes_topic: "tpms/state"
+      json_attributes_template: "{{ value_json.front_left | default({}) | tojson }}"
+      expire_after: 300
+      unit_of_measurement: "bar"
+      device_class: pressure
+      state_class: measurement
+      suggested_display_precision: 2
+    - name: "TPMS Front Left Temperature"
+      unique_id: "tpms_front_left_temperature"
+      state_topic: "tpms/state"
+      value_template: "{{ value_json.front_left.temp if value_json.front_left is defined }}"
+      expire_after: 300
+      unit_of_measurement: "°C"
+      device_class: temperature
+      state_class: measurement
+    - name: "TPMS Front Right Pressure"
+      unique_id: "tpms_front_right_pressure"
+      state_topic: "tpms/state"
+      value_template: "{{ value_json.front_right.bar if value_json.front_right is defined }}"
+      json_attributes_topic: "tpms/state"
+      json_attributes_template: "{{ value_json.front_right | default({}) | tojson }}"
+      expire_after: 300
+      unit_of_measurement: "bar"
+      device_class: pressure
+      state_class: measurement
+      suggested_display_precision: 2
+    - name: "TPMS Front Right Temperature"
+      unique_id: "tpms_front_right_temperature"
+      state_topic: "tpms/state"
+      value_template: "{{ value_json.front_right.temp if value_json.front_right is defined }}"
+      expire_after: 300
+      unit_of_measurement: "°C"
+      device_class: temperature
+      state_class: measurement
+    - name: "TPMS Rear Left Pressure"
+      unique_id: "tpms_rear_left_pressure"
+      state_topic: "tpms/state"
+      value_template: "{{ value_json.rear_left.bar if value_json.rear_left is defined }}"
+      json_attributes_topic: "tpms/state"
+      json_attributes_template: "{{ value_json.rear_left | default({}) | tojson }}"
+      expire_after: 300
+      unit_of_measurement: "bar"
+      device_class: pressure
+      state_class: measurement
+      suggested_display_precision: 2
+    - name: "TPMS Rear Left Temperature"
+      unique_id: "tpms_rear_left_temperature"
+      state_topic: "tpms/state"
+      value_template: "{{ value_json.rear_left.temp if value_json.rear_left is defined }}"
+      expire_after: 300
+      unit_of_measurement: "°C"
+      device_class: temperature
+      state_class: measurement
+    - name: "TPMS Rear Right Pressure"
+      unique_id: "tpms_rear_right_pressure"
+      state_topic: "tpms/state"
+      value_template: "{{ value_json.rear_right.bar if value_json.rear_right is defined }}"
+      json_attributes_topic: "tpms/state"
+      json_attributes_template: "{{ value_json.rear_right | default({}) | tojson }}"
+      expire_after: 300
+      unit_of_measurement: "bar"
+      device_class: pressure
+      state_class: measurement
+      suggested_display_precision: 2
+    - name: "TPMS Rear Right Temperature"
+      unique_id: "tpms_rear_right_temperature"
+      state_topic: "tpms/state"
+      value_template: "{{ value_json.rear_right.temp if value_json.rear_right is defined }}"
+      expire_after: 300
+      unit_of_measurement: "°C"
+      device_class: temperature
+      state_class: measurement

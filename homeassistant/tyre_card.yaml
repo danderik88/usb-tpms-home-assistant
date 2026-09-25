@@ -1,0 +1,57 @@
+# Top view of the vehicle, nose up, one value per wheel. Needs custom:button-card (HACS).
+# Green / red use the same thresholds as automation_tpms_alarm.yaml (4.5 / 6.5 bar, 75 °C): keep them
+# in sync. Grey = no data. Drawn after an Elnagh Prince 55L (~7 x 2.35 m, ~4 m wheelbase); move the
+# wheels (wh(...) y values) for a different vehicle. Sized for a sections view, 12 columns x 8 rows.
+type: custom:button-card
+entity: sensor.tpms_front_left_pressure
+triggers_update:
+  - sensor.tpms_front_right_pressure
+  - sensor.tpms_rear_left_pressure
+  - sensor.tpms_rear_right_pressure
+show_name: false
+show_state: false
+show_icon: false
+tap_action:
+  action: none
+grid_options:
+  columns: 12
+  rows: 8
+styles:
+  card:
+    - padding: 8px
+    - height: 100%
+  grid:
+    - grid-template-areas: '"car"'
+    - grid-template-columns: 1fr
+    - grid-template-rows: 1fr
+  custom_fields:
+    car:
+      - height: 100%
+custom_fields:
+  car: |
+      [[[
+        const P = (k) => {
+          const s = states['sensor.tpms_' + k + '_pressure'];
+          const v = s ? parseFloat(s.state) : NaN, t = s ? parseFloat(s.attributes.temp) : NaN;
+          const c = isNaN(v) ? '#888' : (v < 4.5 || v > 6.5 || t > 75) ? '#f44336' : '#4caf50';
+          return {c, v: isNaN(v) ? '—' : v.toFixed(1), t: isNaN(t) ? '' : ' · ' + Math.round(t) + '°'};
+        };
+        const lab = (x, y, a, n, d) => `<text x="${x}" y="${y}" text-anchor="${a}" fill="#9e9e9e" font-size="22">${n}</text>
+          <text x="${x}" y="${y + 50}" text-anchor="${a}" fill="${d.c}" font-size="54" font-weight="700">${d.v}</text>
+          <text x="${x}" y="${y + 80}" text-anchor="${a}" fill="#9e9e9e" font-size="22">bar${d.t}</text>`;
+        const wh = (x, y, d) => `<rect x="${x - 13}" y="${y - 32}" width="26" height="64" rx="8" fill="#1c1c1c" stroke="${d.c}" stroke-width="4"/>`;
+        const as = P('front_left'), ad = P('front_right'), ps = P('rear_left'), pd = P('rear_right');
+        return `<svg viewBox="0 0 600 560" width="100%" height="100%" preserveAspectRatio="xMidYMid meet" font-family="Roboto, sans-serif">
+          <path d="M226,150 L226,78 Q230,24 300,20 Q370,24 374,78 L374,150 Z" fill="#e6e6e6" stroke="#bdbdbd" stroke-width="2"/>
+          <path d="M236,92 Q300,74 364,92 L360,118 Q300,104 240,118 Z" fill="#37474f"/>
+          <rect x="220" y="128" width="160" height="410" rx="16" fill="#f5f5f5" stroke="#bdbdbd" stroke-width="2"/>
+          <line x1="228" y1="140" x2="228" y2="526" stroke="#c62828" stroke-width="4"/>
+          <line x1="372" y1="140" x2="372" y2="526" stroke="#c62828" stroke-width="4"/>
+          <rect x="270" y="170" width="60" height="52" rx="6" fill="#d7dbde" stroke="#a7adb2" stroke-width="2"/>
+          <rect x="262" y="300" width="76" height="64" rx="7" fill="#cfd4d8" stroke="#a7adb2" stroke-width="2"/>
+          <rect x="276" y="450" width="48" height="44" rx="5" fill="#d7dbde" stroke="#a7adb2" stroke-width="2"/>
+          ${wh(222, 100, as)}${wh(378, 100, ad)}${wh(222, 396, ps)}${wh(378, 396, pd)}
+          ${lab(190, 64, 'end', 'FRONT L', as)}${lab(410, 64, 'start', 'FRONT R', ad)}
+          ${lab(190, 360, 'end', 'REAR L', ps)}${lab(410, 360, 'start', 'REAR R', pd)}
+        </svg>`;
+      ]]]

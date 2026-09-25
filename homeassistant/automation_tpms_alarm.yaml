@@ -1,0 +1,50 @@
+# Example alarm. Thresholds are the ones used on the author's motorhome (cold pressure ~5.2-5.5 bar):
+# change them for your tyres. `for: 1 min` ignores the few seconds a sensor reads 0 while you
+# unscrew it. Replace notify.mobile_app_your_phone with your own notify service.
+alias: TPMS - tyre alarm
+id: tpms_tyre_alarm
+triggers:
+  - trigger: numeric_state
+    entity_id:
+      - sensor.tpms_front_left_pressure
+      - sensor.tpms_front_right_pressure
+      - sensor.tpms_rear_left_pressure
+      - sensor.tpms_rear_right_pressure
+    below: 4.5
+    for: "00:01:00"
+    id: low
+  - trigger: numeric_state
+    entity_id:
+      - sensor.tpms_front_left_pressure
+      - sensor.tpms_front_right_pressure
+      - sensor.tpms_rear_left_pressure
+      - sensor.tpms_rear_right_pressure
+    above: 6.5
+    for: "00:01:00"
+    id: high
+  - trigger: numeric_state
+    entity_id:
+      - sensor.tpms_front_left_temperature
+      - sensor.tpms_front_right_temperature
+      - sensor.tpms_rear_left_temperature
+      - sensor.tpms_rear_right_temperature
+    above: 75
+    for: "00:01:00"
+    id: hot
+actions:
+  - action: notify.mobile_app_your_phone
+    data:
+      title: "⚠️ Tyres"
+      message: >-
+        {{ {'low': 'Low pressure', 'high': 'High pressure', 'hot': 'Hot tyre'}[trigger.id] }}:
+        {{ trigger.to_state.name }} {{ trigger.to_state.state }} {{ trigger.to_state.attributes.unit_of_measurement }}
+      data:
+        # Android: own channel + high importance = heads-up banner that stays until tapped
+        channel: TPMS alarm
+        importance: high
+        priority: high
+        ttl: 0
+        sticky: "true"
+        tag: tpms
+        color: "#ff0000"
+mode: queued
